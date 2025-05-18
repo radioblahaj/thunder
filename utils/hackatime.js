@@ -4,13 +4,14 @@ async function getHackatimeData(userID, projectName) {
     const data = await response.json()
     let projects = data.projects
     projects = Object.values(projects)
-    const project = projects.find((project) => project.key === projectName)
-    console.log(project)
+    for (let project of projects) {
+        project["key"] = project["key"].toLowerCase()
+        console.log(projects)
+    }
+    const project = projects.find((project) => project.key.toLowerCase() === projectName.toLowerCase())
     const totalInHours = Math.round(project.total / 3600)
-    console.log(totalInHours)
     return totalInHours
 }
 
-getHackatimeData("U01MPHKFZ7S", "thunder")
 
 module.exports = { getHackatimeData }
