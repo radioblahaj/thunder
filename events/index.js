@@ -1,4 +1,5 @@
 const path = require("path");
+const { errorLogger } = require("../utils/error");
 
 async function handleEvent({ event, client, body, say }) {
   try {
@@ -14,7 +15,7 @@ async function handleEvent({ event, client, body, say }) {
       console.warn(`No handler found for event: ${eventName}`);
     }
   } catch (error) {
-    errorLogger(error, __dirname);
+    console.error(error)
   }
 }
 

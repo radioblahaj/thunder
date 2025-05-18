@@ -6,3 +6,5 @@ node_modules
 pnpm-lock.yaml
 prisma/migrations/20241008185016_migrate_dev/migration.sql
 
+prisma/migrations/20250518201153_dev/migration.sql
+prisma/migrations/migration_lock.toml

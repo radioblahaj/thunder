@@ -4,8 +4,10 @@ async function handleViews({ ack, logger, event, client, body, say }) {
   try {
     const viewId = body.view.callback_id;
     const bodyType = body.view.type;
-    const actionId = firstAction.action_id;
-    const blockId = firstAction.block_id;    
+    const actionId = body.view.state.values
+    console.log(actionId)
+   
+
     const viewFile = path.resolve(__dirname, `${viewId}.js`);
 
     // Dynamically require action handlers
