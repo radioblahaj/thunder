@@ -6,10 +6,7 @@ async function actionId0({ event, client, body, say, logger, ack }) {
     const thread_ts = body.container.message_ts
     const user = body.user.id
     console.log("this is working")
-    await client.chat.postMessage({
-        channel: channel,
-        text: "this is working"
-    })
+
     try {
         const result = await client.views.open({
             trigger_id: body.trigger_id,
@@ -18,7 +15,7 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                 callback_id: "submission",
                 title: {
                     type: "plain_text",
-                    text: "My App",
+                    text: "Thunder YSWS Submission",
                     emoji: true
                 },
                 submit: {
@@ -86,6 +83,37 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                         label: {
                             type: "plain_text",
                             text: "Birthday",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "section",
+                        block_id: "channel",
+                        text: {
+                            type: "mrkdwn",
+                            text: "Select channels where your project will be available"
+                        },
+                        accessory: {
+                            type: "multi_conversations_select",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Select conversations",
+                                emoji: true
+                            },
+                            action_id: "multi_conversations_select-action"
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "project_desc",
+                        element: {
+                            type: "plain_text_input",
+                            multiline: true,
+                            action_id: "plain_text_input-action"
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "What did you make and how do I use your bot?",
                             emoji: true
                         }
                     },
@@ -203,37 +231,6 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                         label: {
                             type: "plain_text",
                             text: "Country",
-                            emoji: true
-                        }
-                    },
-                    {
-                        type: "section",
-                        block_id: "channel",
-                        text: {
-                            type: "mrkdwn",
-                            text: "Test block with multi conversations select"
-                        },
-                        accessory: {
-                            type: "multi_conversations_select",
-                            placeholder: {
-                                type: "plain_text",
-                                text: "Select conversations",
-                                emoji: true
-                            },
-                            action_id: "multi_conversations_select-action"
-                        }
-                    },
-                    {
-                        type: "input",
-                        block_id: "project_desc",
-                        element: {
-                            type: "plain_text_input",
-                            multiline: true,
-                            action_id: "plain_text_input-action"
-                        },
-                        label: {
-                            type: "plain_text",
-                            text: "What did you make and how do I use your bot?",
                             emoji: true
                         }
                     }

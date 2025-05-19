@@ -81,4 +81,5 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
             text: `You haven't hit the hour requirement yet for ${projectName}:(, please resubmit when you hit the hour requirement`
         });
     }
-};
+ 
+}
