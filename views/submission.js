@@ -1,37 +1,96 @@
-const { getThreadts } = require("../events/reaction_added")
-const { getPrisma } = require("../utils/prismaConnector")
-const prisma = getPrisma()
-const { getHackatimeData } = require("../utils/hackatime")
+const { getThreadts } = require("../events/reaction_added");
+const { getPrisma } = require("../utils/prismaConnector");
+const prisma = getPrisma();
+const { getHackatimeData } = require("../utils/hackatime");
+const { updateView } = require("../utils/update");
+const Airtable = require('airtable');
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
+
+
+
 
 module.exports = async function addFriend({ event, client, body, say, logger, ack }) {
-    await ack()
-    const projectName = body.view.state.values.project_name["plain_text_input-action"].value
-    const githubRepo = body.view.state.values.github_repo["url_text_input-action"].value
-    const email = body.view.state.values.email["email_text_input-action"].value
-    const projectDesc = body.view.state.values.project_desc["plain_text_input-action"].value
-    const channel = body.view.state.values.channel["multi_conversations_select-action"].selected_conversations
+    await ack();
+
+    const projectName = body.view.state.values.project_name["plain_text_input-action"].value;
+    const githubRepo = body.view.state.values.github_repo["url_text_input-action"].value;
+    const email = body.view.state.values.email["email_text_input-action"].value;
+    const projectDesc = body.view.state.values.project_desc["plain_text_input-action"].value;
+    const channel = body.view.state.values.channel["multi_conversations_select-action"].selected_conversations;
+    const addressLine1 = body.view.state.values.address_line1?.["plain_text_input-action"]?.value;
+    const addressLine2 = body.view.state.values.address_line2?.["plain_text_input-action"]?.value;
+    const city = body.view.state.values.city?.["plain_text_input-action"]?.value;
+    const postalCode = body.view.state.values.postal_code?.["plain_text_input-action"]?.value;
+    const state = body.view.state.values.state?.["plain_text_input-action"]?.value;
+    const country = body.view.state.values.country?.["plain_text_input-action"]?.value;
+    const birthday = body.view.state.values.birthday?.["datepicker-action"]?.value;
+
 
     const user = await prisma.user.findFirst({
         where: {
             userID: body.user.id
         }
-    })
-    const hackatimeData = await getHackatimeData(body.user.id, projectName)
-    console.log(hackatimeData)
-    const thread_ts = user.thread_ts
-    console.log(thread_ts)
-    console.log(user)
+    });
+
+    const hackatimeData = await getHackatimeData(body.user.id, projectName);
+    console.log(hackatimeData);
+    const thread_ts = user.thread_ts;
+    console.log(thread_ts);
+    console.log(user);
+
+    console.log(projectName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, postalCode, state, country);
+
     if (hackatimeData >= 5) {
         await client.chat.postMessage({
             channel: "C08SQGV4BT6",
+            text: `:yay: <@${body.user.id}> just submitted ${projectName}! You can try it out at <#${channel}> and check out the code at <${githubRepo}>!`
+        });
+        await client.chat.postMessage({
+            channel: "C08SQGV4BT6",
             thread_ts: thread_ts,
-            text: `New project submission:\n• Project: ${projectName}\n• Repo: ${githubRepo}\n• Email: N/A \n• Description: ${projectDesc}\n• Channel: <#${channel}>`
-        })
+            text: `:rac_woah: woah!! *${projectName}* is a really awesome project! You should be proud of yourself, <@${body.user.id}>! \n I need to review your submission further and make sure everything checks out! You'll get a DM from <@${process.env.ADMIN_ID}> if there's anything wrong!`
+        });
+        try {
+            console.log("Creating Airtable record...");
+            await base("YSWS Project Submission").create([
+                {
+                    fields: {
+                        "Code URL": githubRepo,
+                        "Playable URL": `https://hackclub.slack.com/archives/${channel}`,
+                        "Email": email,
+                        "Description": projectDesc,
+                        "Address (Line 1)": addressLine1,
+                        "Address (Line 2)": addressLine2,
+                        "City": city,
+                        "ZIP / Postal Code": postalCode,
+                        "State / Province": state,
+                        "Country": country,
+                        "Birthday": birthday || user.birthday
+                    }
+                }
+            ]);
+            console.log("Airtable record created successfully");
+        } catch (error) {
+            console.error("Error creating Airtable record:", error);
+        }
+
     } else {
         await client.chat.postMessage({
             channel: "C08SQGV4BT6",
             thread_ts: thread_ts,
-            text: `You haven't met the hour requirement for ${projectName}:(, please resubmit when you hit the hour requirement`
-        })
+            text: `You haven't hit the hour requirement yet for ${projectName}:(, please resubmit when you hit the hour requirement`
+        });
     }
+
+    const blocks = [
+        {
+            type: "section",
+            text: {
+                type: "mrkdwn",
+                text: "Thank you for submitting your project! We'll review it shortly and get back to you with any questions or feedback."
+            }
+        }
+    ];
+
+    return blocks;
 }

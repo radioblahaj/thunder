@@ -72,6 +72,141 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                         }
                     },
                     {
+                        type: "input",
+                        block_id: "birthday",
+                        element: {
+                            type: "datepicker",
+                            action_id: "datepicker-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Select a date",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Birthday",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "section",
+                        block_id: "address_header",
+                        text: {
+                            type: "mrkdwn",
+                            text: "*Shipping Address*"
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "address_line1",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Street address",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Address Line 1",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "address_line2",
+                        optional: true,
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Apartment, suite, etc.",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Address Line 2",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "city",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "City",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "City",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "postal_code",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Postal/ZIP code",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Postal Code",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "state",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "State/Province",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "State/Province",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "country",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action",
+                            placeholder: {
+                                type: "plain_text",
+                                text: "Country",
+                                emoji: true
+                            }
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Country",
+                            emoji: true
+                        }
+                    },
+                    {
                         type: "section",
                         block_id: "channel",
                         text: {
