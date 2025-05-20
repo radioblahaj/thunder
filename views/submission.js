@@ -22,21 +22,33 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
     const state = body.view.state.values.state?.["plain_text_input-action"]?.value;
     const country = body.view.state.values.country?.["plain_text_input-action"]?.value;
     const birthday = body.view.state.values.birthday?.["datepicker-action"]?.selected_date;
-    
+
     // Get the thread information from the view submission
     const metadata = JSON.parse(body.view.private_metadata);
     const thread_ts = metadata.thread_ts;
     const channel_id = metadata.channel;
 
-    const hackatimeData = await getHackatimeData(body.user.id, directoryName);
-    console.log(hackatimeData);
+    try {
+        const hackatimeData = await getHackatimeData(body.user.id, directoryName);
+        console.log(hackatimeData);
+    } catch (error) {
+        console.error("Error getting hackatime data:", error);
+        await client.chat.postMessage({
+            channel: channel_id,
+            thread_ts: thread_ts,
+            text: `<@${process.env.ADMIN_ID}>, there was an error submitting ${projectName} for <@${body.user.id}>. Here's the error: \n \`\`\`${error}\`\`\``
+        });
+        return;
+    }
 
-    console.log(projectName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
+    console.log(projectName, directoryName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
+
 
     if (hackatimeData >= 5) {
         await client.chat.postMessage({
             channel: "C06V2GEV3MY",
-            text: `:yay: <@${body.user.id}> just submitted ${projectName}! You can try it out at <#${channel}> and check out the code at <${githubRepo}>!`
+            text: `:yay: <@${body.user.id}> just submitted ${projectName}! You can try it out at <#${channel}> and check out the code at <${githubRepo}>!`,
+            unfurl_links: true,
         });
         await client.chat.postMessage({
             channel: channel_id,
@@ -58,7 +70,7 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
                         "ZIP / Postal Code": postalCode,
                         "State / Province": state,
                         "Country": country,
-                        "Birthday": birthday 
+                        "Birthday": birthday
                     }
                 }
             ]);
