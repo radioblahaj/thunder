@@ -6,13 +6,11 @@ const { updateView } = require("../utils/update");
 const Airtable = require('airtable');
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
-
-
-
 module.exports = async function addFriend({ event, client, body, say, logger, ack }) {
     await ack();
 
     const projectName = body.view.state.values.project_name["plain_text_input-action"].value;
+    const directoryName = body.view.state.values.directory_name["plain_text_input-action"].value;
     const githubRepo = body.view.state.values.github_repo["url_text_input-action"].value;
     const email = body.view.state.values.email["email_text_input-action"].value;
     const projectDesc = body.view.state.values.project_desc["plain_text_input-action"].value;
@@ -23,30 +21,25 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
     const postalCode = body.view.state.values.postal_code?.["plain_text_input-action"]?.value;
     const state = body.view.state.values.state?.["plain_text_input-action"]?.value;
     const country = body.view.state.values.country?.["plain_text_input-action"]?.value;
-    const birthday = body.view.state.values.birthday?.["datepicker-action"]?.value;
-
-
-    const user = await prisma.user.findFirst({
-        where: {
-            userID: body.user.id
-        }
-    });
+    const birthday = body.view.state.values.birthday?.["datepicker-action"]?.selected_date;
+    
+    // Get the thread information from the view submission
+    const metadata = JSON.parse(body.view.private_metadata);
+    const thread_ts = metadata.thread_ts;
+    const channel_id = metadata.channel;
 
     const hackatimeData = await getHackatimeData(body.user.id, projectName);
     console.log(hackatimeData);
-    const thread_ts = user.thread_ts;
-    console.log(thread_ts);
-    console.log(user);
 
-    console.log(projectName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, postalCode, state, country);
+    console.log(projectName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
 
     if (hackatimeData >= 5) {
         await client.chat.postMessage({
-            channel: "C08SQGV4BT6",
+            channel: "C06V2GEV3MY",
             text: `:yay: <@${body.user.id}> just submitted ${projectName}! You can try it out at <#${channel}> and check out the code at <${githubRepo}>!`
         });
         await client.chat.postMessage({
-            channel: "C08SQGV4BT6",
+            channel: channel_id,
             thread_ts: thread_ts,
             text: `:rac_woah: woah!! *${projectName}* is a really awesome project! You should be proud of yourself, <@${body.user.id}>! \n I need to review your submission further and make sure everything checks out! You'll get a DM from <@${process.env.ADMIN_ID}> if there's anything wrong!`
         });
@@ -65,7 +58,7 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
                         "ZIP / Postal Code": postalCode,
                         "State / Province": state,
                         "Country": country,
-                        "Birthday": birthday || user.birthday
+                        "Birthday": birthday 
                     }
                 }
             ]);
@@ -76,10 +69,9 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
 
     } else {
         await client.chat.postMessage({
-            channel: "C08SQGV4BT6",
+            channel: channel_id,
             thread_ts: thread_ts,
             text: `You haven't hit the hour requirement yet for ${projectName}:(, please resubmit when you hit the hour requirement`
         });
     }
- 
 }

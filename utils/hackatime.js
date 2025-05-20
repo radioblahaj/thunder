@@ -1,5 +1,5 @@
 async function getHackatimeData(userID, projectName) {
-    const url = `https://hackatime.hackclub.com/api/summary?user=${userID}&from=2025-05-16&to=2025-05-18`
+    const url = `https://hackatime.hackclub.com/api/summary?user=${userID}`
     const response = await fetch(url)
     const data = await response.json()
     let projects = data.projects

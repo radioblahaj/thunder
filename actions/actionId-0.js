@@ -13,6 +13,7 @@ async function actionId0({ event, client, body, say, logger, ack }) {
             view: {
                 type: "modal",
                 callback_id: "submission",
+                private_metadata: JSON.stringify({ thread_ts, channel }),
                 title: {
                     type: "plain_text",
                     text: "Thunder YSWS Submission",
@@ -38,7 +39,20 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                         },
                         label: {
                             type: "plain_text",
-                            text: "Project Name",
+                            text: "Bot name",
+                            emoji: true
+                        }
+                    },
+                    {
+                        type: "input",
+                        block_id: "directory_name",
+                        element: {
+                            type: "plain_text_input",
+                            action_id: "plain_text_input-action"
+                        },
+                        label: {
+                            type: "plain_text",
+                            text: "Hackatime Project Name (this is your project's name on hackatime)",
                             emoji: true
                         }
                     },
@@ -91,7 +105,7 @@ async function actionId0({ event, client, body, say, logger, ack }) {
                         block_id: "channel",
                         text: {
                             type: "mrkdwn",
-                            text: "Select channels where your project will be available"
+                            text: "Select the channel where people can use your bot"
                         },
                         accessory: {
                             type: "multi_conversations_select",
