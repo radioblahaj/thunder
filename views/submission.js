@@ -28,7 +28,7 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
     const thread_ts = metadata.thread_ts;
     const channel_id = metadata.channel;
 
-    const hackatimeData = await getHackatimeData(body.user.id, projectName);
+    const hackatimeData = await getHackatimeData(body.user.id, directoryName);
     console.log(hackatimeData);
 
     console.log(projectName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
