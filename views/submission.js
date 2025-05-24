@@ -31,20 +31,7 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
     try {
         const hackatimeData = await getHackatimeData(body.user.id, directoryName);
         console.log(hackatimeData);
-    } catch (error) {
-        console.error("Error getting hackatime data:", error);
-        await client.chat.postMessage({
-            channel: channel_id,
-            thread_ts: thread_ts,
-            text: `<@${process.env.ADMIN_ID}>, there was an error submitting ${projectName} for <@${body.user.id}>. Here's the error: \n \`\`\`${error}\`\`\``
-        });
-        return;
-    }
-
-    console.log(projectName, directoryName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
-
-
-    if (hackatimeData >= 5) {
+         if (hackatimeData >= 5) {
         await client.chat.postMessage({
             channel: "C06V2GEV3MY",
             text: `:yay: <@${body.user.id}> just submitted ${projectName}! You can try it out at <#${channel}> and check out the code at <${githubRepo}>!`,
@@ -86,4 +73,18 @@ module.exports = async function addFriend({ event, client, body, say, logger, ac
             text: `You haven't hit the hour requirement yet for ${projectName}:(, please resubmit when you hit the hour requirement`
         });
     }
+    } catch (error) {
+        console.error("Error getting hackatime data:", error);
+        await client.chat.postMessage({
+            channel: channel_id,
+            thread_ts: thread_ts,
+            text: `<@${process.env.ADMIN_ID}>, there was an error submitting ${projectName} for <@${body.user.id}>. Here's the error: \n \`\`\`${error}\`\`\``
+        });
+        return;
+    }
+
+    console.log(projectName, directoryName, githubRepo, email, projectDesc, channel, addressLine1, addressLine2, city, birthday, postalCode, state, country);
+
+
+   
 }
